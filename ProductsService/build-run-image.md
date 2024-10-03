@@ -1,10 +1,13 @@
+# build project
+mvn clean package -Dmaven.skip.test
+
 # build image
-docker build -t ricardoahumada/products-service-jwt:v1 -f Dockerfile ./
+docker build -t ricardoahumada/products-service:sv1 -f Dockerfile ./
 
 # run detached
-docker run -it -d -p 9090:9090 ricardoahumada/products-service-jwt:v1
+docker run -it -d -p 9090:9090 ricardoahumada/products-service:sv1
 
-# exec commendas
+# exec commends
 docker exec -it <CONTAINER_NAME> sh
 
 # exec sonarq analisys from inside 

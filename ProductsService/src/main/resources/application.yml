@@ -1,8 +1,30 @@
 spring:
-  application.name: ProductsService
+  application:
+    name: ProductsService
   profiles.active: dev
-  sql.init.mode: always
+
+server:
+  servlet.contextPath: /api
+  port: 8080
+  error:
+     include-message: always
+     include-binding-errors: always
+     include-stacktrace: on_param
+     include-exception: false
+
+spring.mvc.pathmatch.matching-strategy: ANT_PATH_MATCHER
+
+products.openapi:
+  dev-url: http://www.dev.microcompany.es
+  prod-url: http://www.prod.microcompany.es
+
+---
+spring:
+  config.activate.on-profile: dev
   devtools.restart.enabled: true
+  application:
+    name: ProductsService
+  sql.init.mode: always
   datasource:
     url: "jdbc:h2:mem:productsdb"
     driverClassName: org.h2.Driver
@@ -20,32 +42,13 @@ spring:
     console.path: /h2-ui
 
 server:
-  port: 8080
-
-
-products.openapi:
-  dev-url: "http://localhost:9090"
-  prod-url: "https://localhost:8443"
-
-app.jwt.secret: SECRET-KEY-VALUE
-
----
-spring:
-  config.activate.on-profile: dev
-
-server:
   port: 9090
-  error:
-    include-message: always
-    include-binding-errors: always
-    include-stacktrace: on-param
-    include-exception: false
-
 
 #debug: true
 logging:
-#  path: /var/tmp/
-#  file: /var/tmp/mylog.log
+  file:
+#    path: /var/tmp/
+    name: /var/tmp/mylog.log
   level:
     root: INFO
 
@@ -53,12 +56,33 @@ logging:
 ---
 spring:
   config.activate.on-profile: prod
+  application.name: ProductsService
+  sql.init.mode: never  
+  datasource:
+    url: "jdbc:h2:mem:productsdb"
+    driverClassName: org.h2.Driver
+    username: prod_user
+    password: prod_pass
+  jpa:
+    show-sql: true
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: validate
+      generate-ddl: true
+    defer-datasource-initialization: true
+  h2:
+    console.enabled: true
+    console.path: /h2-ui
 
 server:
   servlet.contextPath: /api/v1
   port: 8443
   ssl:
-    key-store: "c:/Course/workspace/spring5/vault_1.p12"
-    key-store-password: password
-    keyStoreType: PKCS12
-    keyAlias: products_service
+      key-store: keystore.p12
+      key-store-password: pa55wrd
+      keyStoreType: PKCS12
+      keyAlias: tomcat
+
+# security.require-ssl: true # deprecated
+
+

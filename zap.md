@@ -10,6 +10,12 @@ localhost:8080/zap
 
 # try scan http://vapi.apisec.ai/vapi
 
+# For scanning host services user inner host IP:
+## access
+docker exec -it <CONTAINER_NAME> sh
+## extracted IP 
+route #. E.g. 172.17.0.1
+## use this IP for scan
 
 # Quick scan
 docker exec  

@@ -12,13 +12,11 @@ import org.springframework.test.context.jdbc.Sql;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Arrays;
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-// TODO: uncomment and implement methods
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@Sql("classpath:data_testing.sql")
+@Sql("classpath:testing.sql")
 public class ProductServiceTestRestTemplate {
     // @Value(value = "${local.server.port}")
     @LocalServerPort
@@ -28,30 +26,56 @@ public class ProductServiceTestRestTemplate {
 
     @Test
     public void givenUrl_whenGetProducts_thenAStringExists() throws Exception {
-        ResponseEntity<Product[]> response = restTemplate.getForEntity("http://localhost:" + port + "/products", Product[].class);
+        ResponseEntity<String> response = restTemplate
+                .getForEntity("http://localhost:" + port + "/api/products",
+                        String.class);
+
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(response.getBody().length).isGreaterThan(0);
-//        assertThat(response.getBody()).contains("Travel");
+        assertThat(response.getBody()).contains("Magazine");
+        assertThat(response.getHeaders().getContentType()).isEqualTo(MediaType.APPLICATION_JSON);
+
     }
 
     @Test
     public void givenUrl_whenGetProducts_thenAProductExists() throws Exception {
+        ResponseEntity<Product[]> response = restTemplate
+                .getForEntity("http://localhost:" + port + "/api/products",
+                        Product[].class);
 
+        Product productToTest = new Product(1L, "Magazine", "111-222-3333");
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getHeaders().getContentType()).isEqualTo(MediaType.APPLICATION_JSON);
+
+        Product[] responseBody = response.getBody();
+        assertThat(responseBody)
+                .overridingErrorMessage(
+                        "Expected the array to contain the object: %s in any order but it contained: %s",
+                        productToTest,
+                        Arrays.toString(responseBody)
+                )
+                .extracting(Product::getName)
+                .contains("Magazine");
     }
 
     @Test
     public void givenAProduct_whenPostWithHeader_thenSuccess() throws URISyntaxException {
+        final String baseUrl = "http://localhost:"+port+"/api/products";
+        URI uri = new URI(baseUrl);
+        Product product = new Product(null, "New Test Product","111-222-3333");
+
         HttpHeaders headers = new HttpHeaders();
-        headers.set("CONTENT-TYPE", "application/json");
-        headers.set("ACCEPT", "application/json");
-        Product product = new Product(null, "Nuevo producto", "111-222-3333");
+        headers.set("ACCEPT", "application/xml");
 
         HttpEntity<Product> request = new HttpEntity<>(product, headers);
-        ResponseEntity<Product> response = restTemplate.postForEntity("http://localhost:" + port + "/products", request, Product.class);
 
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
-        assertThat(response.getBody()).extracting(Product::getId).isNotEqualTo(0);
+        ResponseEntity<String> result = this.restTemplate.postForEntity(uri, request, String.class);
 
+        System.out.println(result);
+
+        //Verify request succeed
+        assertThat(result.getStatusCodeValue()).isEqualTo(201);
     }
+
 
 }

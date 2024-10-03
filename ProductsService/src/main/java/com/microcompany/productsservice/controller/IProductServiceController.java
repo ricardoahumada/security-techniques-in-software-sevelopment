@@ -8,58 +8,50 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.annotation.Secured;
-import org.springframework.security.access.prepost.PostAuthorize;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import java.util.List;
 
-@RequestMapping("/default")
-@Validated
-//@CrossOrigin(origins = {"http://localhost:8080/"})
-@Tag(name = "API de productos", description = "Esta es una api para crear y consumir productos")
+@RestController
+@RequestMapping(value = "/default")
+@CrossOrigin(origins = {"http://localhost:8080/"}, allowedHeaders = "*")
+@Tag(name = "Products API", description = "Products management APIs")
 public interface IProductServiceController {
 
-    @GetMapping("")
-//    @PreAuthorize("authentication.principal.username == 'user@email.com")
-//    @PreAuthorize("hasAuthority('ADMIN')")
-//    @Secured("ADMIN")
-//    @PostAuthorize("returnObject.size() > 0")
-    public ResponseEntity<List<Product>> getAll(@RequestParam(required = false) String text);
+    @GetMapping(value = "", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public ResponseEntity<List<Product>> getAllProducts();
 
-
-    @Operation(summary = "Obtener un producto", description = "Endpoint para obtener un producto concreto")
+    @Operation(summary = "Get a product by id", description = "Returns a product as per the id")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Todo bien"),
-            @ApiResponse(responseCode = "404", description = "El producto no existe")
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved"),
+            @ApiResponse(responseCode = "404", description = "Not found - The product was not found")
     })
-    @RequestMapping(value = "/{pid}", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<Product> getOne(
-            @Parameter(name = "Id", description = "El identificador del producto", required = true, example = "234")
-            @Min(1) @PathVariable("pid") Long id
+    @GetMapping(value = "/{id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public ResponseEntity getProduct(
+            @Parameter(name = "id", description = "Product id", example = "1") @PathVariable @Min(1) Long id
     );
 
-    @Operation(summary = "Crear un producto", description = "Endpoint para crear un producto concreto")
+
+    @Operation(summary = "Add a new product", description = "Returns a persisted product")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "202", description = "Todo bien"),
-            @ApiResponse(responseCode = "412", description = "El producto enviado no es correcto")
+            @ApiResponse(responseCode = "202", description = "Successfully created"),
+            @ApiResponse(responseCode = "4XX", description = "Bad request")
     })
-    @RequestMapping(value = "", method = RequestMethod.POST, produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_ATOM_XML_VALUE})
-    public ResponseEntity<Product> create(
-            @io.swagger.v3.oas.annotations.parameters.RequestBody(required = true, description = "El producto a crear sin Id.")
-            @Valid @RequestBody
-            Product product
+    @PostMapping(value = "", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity createProduct(
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(required = true, description = "Product data")
+            @RequestBody @Valid Product newProduct
     );
 
-    @RequestMapping(value = "/{pid}", method = RequestMethod.PUT)
-    public ResponseEntity updateProduct(@PathVariable("pid") Long id, @RequestBody Product aProduct);
+    @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity updateProduct(@PathVariable @Min(1) Long id, @RequestBody @Valid Product aProduct);
 
-    @RequestMapping(value = "/{pid}", method = RequestMethod.DELETE)
-    public ResponseEntity deleteProduct(@PathVariable("pid") Long id);
+    @DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity deleteProduct(@PathVariable @Min(1) Long id);
 
+    @PostMapping(value = "/duplicate/{pid}")
+    public ResponseEntity<Product> duplicate(@PathVariable Long pid);
 
 }
