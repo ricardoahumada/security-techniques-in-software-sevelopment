@@ -1,11 +1,9 @@
-# build image
-docker build -t ricardoahumada/products-service-jwt:v1 -f Dockerfile ./
+# increase memory before running container
+sudo sysctl -w vm.max_map_count=262144
 
-# run detached
-docker run -it -d -p 9090:9090 ricardoahumada/products-service-jwt:v1
-
-# exec commends
+# access container
 docker exec -it <CONTAINER_NAME> sh
+
 
 # exec sonarq analisys from inside 
 ## get the host ip
