@@ -1,21 +1,43 @@
-# simple example
+# Manual
+## simple example
+
 javac DivisionExample.java
 jar -cf DivisionExample.jar DivisionExample.class
-javac -cp jazzer_standalone.jar:DivisionExample.jar DivisionExampleFuzzer.java
+javac -cp ~/workspace/tools/jazzer/jazzer_standalone.jar:DivisionExample.jar DivisionExampleFuzzer.java
 jar -cf DivisionExampleFuzzer.jar DivisionExampleFuzzer.class
 
 
-# download image
+~/workspace/tools/jazzer/jazzer --cp=DivisionExample.jar:DivisionExampleFuzzer.jar --target_class=DivisionExampleFuzzer
+
+~/workspace/tools/jazzer/jazzer --cp=DivisionExample.jar --autofuzz=DivisionExample::divide --autofuzz_ignore=java.lang.IllegalArgumentException  -max_total_time=5
+
+
+
+## maven projects example
+### DivisionExample
+mvn clean install
+### DivisionExampleFuzzer
+mvn clean install
+
+~/workspace/tools/jazzer/jazzer --cp=DivisionExample-1.0-SNAPSHOT.jar:DivisionExampleFuzzer-1.0-SNAPSHOT.jar --target_class=com.banana.DivisionExampleFuzzer
+
+
+~/workspace/tools/jazzer/jazzer --cp=DivisionExample-1.0-SNAPSHOT.jar --autofuzz=com.banana.DivisionExample::divide --autofuzz_ignore=java.lang.IllegalArgumentException  -max_total_time=5
+
+
+# products service example
+TO-DO
+
+# Docker
+## download image
 docker pull cifuzz/jazzer:latest
 
 
-# fuzz jsoup
-## API: https://jsoup.org/apidocs/org/jsoup/Jsoup.html
-## maven: https://mvnrepository.com/artifact/org.jsoup/jsoup/1.14.1
+## fuzz jsoup
+### API: https://jsoup.org/apidocs/org/jsoup/Jsoup.html
+### maven: https://mvnrepository.com/artifact/org.jsoup/jsoup/1.14.1
 docker run  -v $(pwd):/fuzzing  -it cifuzz/jazzer-autofuzz  org.jsoup:jsoup:1.14.1  "org.jsoup.Jsoup::parse(java.lang.String)"
 
-# fuzz example
-## '$(pwd):/fuzzing' Should contain the jars.
+## fuzz example
+### '$(pwd):/fuzzing' Should contain the jars.
 docker run -v $(pwd):/fuzzing -it cifuzz/jazzer --cp=project.jar:fuzzers.jar --target_class=com.example.ExampleFuzzTarget
-
-docker run -v $(pwd):/fuzzing -it cifuzz/jazzer --cp=ProductsService-0.0.1-SNAPSHOT.jar:fuzzers.jar --target_class=com.microcompany.productsservice.controller.ProductServiceController
