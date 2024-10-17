@@ -1,11 +1,11 @@
 # increase memory before running container
 sudo sysctl -w vm.max_map_count=262144
 
-# access container
+# access container with prompt
 docker exec -it <CONTAINER_NAME> sh
 
 
-# exec sonarq analisys from inside 
+# exec sonarq analysis from inside 
 ## get the host ip
 ip addr show eth0 # get the ip mask
 route # get the gateway for the ip mask
