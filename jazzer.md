@@ -26,9 +26,6 @@ mvn clean install
 ~/workspace/tools/jazzer/jazzer --cp=DivisionExample-1.0-SNAPSHOT.jar --autofuzz=com.banana.DivisionExample::divide --autofuzz_ignore=java.lang.IllegalArgumentException  -max_total_time=5
 
 
-# products service example
-TO-DO
-
 # Docker
 ## download image
 docker pull cifuzz/jazzer:latest
@@ -45,6 +42,8 @@ docker run -it --entrypoint /bin/sh cifuzz/jazzer
 ### maven: https://mvnrepository.com/artifact/org.jsoup/jsoup/1.14.1
 docker run  -v $(pwd):/fuzzing  -it cifuzz/jazzer-autofuzz  org.jsoup:jsoup:1.14.1  "org.jsoup.Jsoup::parse(java.lang.String)"
 
+docker run  -v $(pwd):/fuzzing  -it cifuzz/jazzer-autofuzz  com.mikesamuel:json-sanitizer:1.1  "com.google.json.JsonSanitizer::sanitize(java.lang.String)"
+
 ## fuzz a jar
 ### '$(pwd):/fuzzing' jars will be copies to fuzzing.
 
@@ -53,3 +52,7 @@ docker run -v $(pwd):/fuzzing -it cifuzz/jazzer --cp=DivisionExample.jar  --auto
 docker run -v $(pwd):/fuzzing -it cifuzz/jazzer --cp=DivisionExample-1.0-SNAPSHOT.jar  --autofuzz=com.banana.DivisionExample::divide --autofuzz_ignore=java.lang.IllegalArgumentException  -max_total_time=5
 
 docker run  -v $(pwd):/fuzzing  -it cifuzz/jazzer --cp=DivisionExample.jar:DivisionExampleFuzzer.jar:fuzzers.jar --target_class=DivisionExampleFuzzer  --ignore=java.lang.IllegalArgumentException -max_total_time=5
+
+
+
+docker run -v $(pwd):/fuzzing -it cifuzz/jazzer --cp=DivisionExample-1.0-SNAPSHOT.jar  --autofuzz=com.banana.ApplicationUnderTest::consume -max_total_time=5 -use_value_profile=1
