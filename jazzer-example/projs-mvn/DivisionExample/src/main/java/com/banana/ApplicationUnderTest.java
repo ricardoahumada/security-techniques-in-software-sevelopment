@@ -1,3 +1,9 @@
+package com.banana;
+
+import com.code_intelligence.jazzer.api.FuzzerSecurityIssueCritical;
+
+import java.util.Base64;
+
 class ApplicationUnderTest {
     private static String base64Encode(String input) {
         return Base64.getEncoder().encodeToString(input.getBytes());
@@ -16,7 +22,7 @@ class ApplicationUnderTest {
                 // To get here, the fuzzer has to guess the expected input bitwise with value profile
                 if (insecureEncrypt(input2) == 0x888a82ff483ad9c2L) { // insecureEncrypt(Long.toString("profile"))
                     // To get here, the fuzzer needs fake program counters and value profile
-                    throw new FuzzerSecurityIssue("You found a Bug");
+                    throw new FuzzerSecurityIssueCritical("You found a Bug");
                 }
             }
         }
