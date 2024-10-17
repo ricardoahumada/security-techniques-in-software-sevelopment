@@ -33,6 +33,9 @@ TO-DO
 ## download image
 docker pull cifuzz/jazzer:latest
 
+## help
+docker run  -it cifuzz/jazzer --help
+
 ## look into image
 docker run -it --entrypoint /bin/sh cifuzz/jazzer
 
@@ -49,3 +52,4 @@ docker run -v $(pwd):/fuzzing -it cifuzz/jazzer --cp=DivisionExample.jar  --auto
 
 docker run -v $(pwd):/fuzzing -it cifuzz/jazzer --cp=DivisionExample-1.0-SNAPSHOT.jar  --autofuzz=com.banana.DivisionExample::divide --autofuzz_ignore=java.lang.IllegalArgumentException  -max_total_time=5
 
+docker run  -v $(pwd):/fuzzing  -it cifuzz/jazzer --cp=DivisionExample.jar:DivisionExampleFuzzer.jar:fuzzers.jar --target_class=DivisionExampleFuzzer  --ignore=java.lang.IllegalArgumentException -max_total_time=5
