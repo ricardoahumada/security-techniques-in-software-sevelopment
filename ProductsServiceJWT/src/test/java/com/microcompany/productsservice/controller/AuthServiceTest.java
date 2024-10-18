@@ -122,5 +122,47 @@ class AuthServiceTest extends TokenTesting{
 
     }
 
+    @Test
+    void given_FakeAccesstoken_when_getproducts_then_UnAuth() {
+
+        try {
+            // given: NO existing token
+
+            // when
+            mvc.perform(get("/products")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .header("Authorization", "Bearer Faketoken")
+                    )
+                    // then
+                    .andDo(MockMvcResultHandlers.print())
+                    .andExpect(status().isUnauthorized());
+
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+
+    }
+
+    @Test
+    void given_ModifiedAccesstoken_when_getproducts_then_UnAuth() {
+
+        try {
+            // given: NO existing token
+
+            // when
+            mvc.perform(get("/products")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .header("Authorization", "Bearer "+ accessToken.replace("A","X"))
+                    )
+                    // then
+                    .andDo(MockMvcResultHandlers.print())
+                    .andExpect(status().isUnauthorized());
+
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+
+    }
+
 
 }

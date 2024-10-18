@@ -33,11 +33,11 @@ public abstract class TokenTesting {
     @Autowired
     private UserRepository userRepository;
 
-    private String email = "t@t.com";
-    private String password = "tpasswrd";
+    private String email = "user@email.com";
+    private String password = "upass";
     public String accessToken = null;
 
-    @BeforeAll
+    /*@BeforeAll
     public void SetUpUser() {
         // Create user
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
@@ -46,12 +46,10 @@ public abstract class TokenTesting {
 
         User aUser = new User(null, email, enc_password, ERole.USER);
         userRepository.save(aUser);
-    }
+    }*/
 
     @BeforeEach
     public void setUp() throws Exception {
-
-
         // Get Token
         AuthRequest authRequest = new AuthRequest(email, password);
 

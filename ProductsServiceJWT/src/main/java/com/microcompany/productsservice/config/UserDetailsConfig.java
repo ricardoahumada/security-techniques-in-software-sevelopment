@@ -17,6 +17,7 @@ public class UserDetailsConfig {
 
     @Autowired
     private UserRepository userRepo;
+
     @Bean
     public UserDetailsService userDetailsService() {
         return new UserDetailsService() {
