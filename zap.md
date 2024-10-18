@@ -17,5 +17,10 @@ docker exec -it <CONTAINER_NAME> sh
 route #. E.g. 172.17.0.1
 ## use this IP for scan
 
-# Quick scan
-docker exec  
+# Fuzzing
+- Add site
+- Right click > attack > fuzz
+- Add and/or select param(s) value to fuzz >  add (note that the param name is defined) > add
+- add > Add payloads from txt > ok
+- start fuzzing
+
